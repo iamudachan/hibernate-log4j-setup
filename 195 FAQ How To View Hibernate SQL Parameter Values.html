@@ -1,0 +1,313 @@
+<html>
+                <head>
+                <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+                <title>195 FAQ How To View Hibernate SQL Parameter Values</title>
+                </head>
+                <body>
+                <div class="container">
+                <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <p class="lead"><p>FAQ: How To View Hibernate SQL Parameter Values</p>
+
+<p><strong>Question:</strong> </p>
+
+
+
+
+
+
+
+<p><em class="redactor-inline-converted">I see hibernate printing out the query parameters as ? in the console. <br>Is it possible to printout the value that was actually queried on the <br>database. Asking as this would help in the debugging purpose.<br></em></p>
+
+
+
+
+
+
+
+<p>Answer:</p>
+
+
+
+
+
+
+
+<p>When using Hibernate, if you log the Hibernate SQL statements, you will see this:</p>
+
+
+
+
+
+
+
+<p>Hibernate: insert into student (email, first_name, last_name, id) values (?, ?, ?, ?)</p>
+
+
+
+
+
+
+
+<p>However, for debugging your application, you want to see the actual 
+parameter values in the Hibernate logs. Basically, you want to get rid 
+of the question marks in the Hibernate logs.</p>
+
+
+
+
+
+
+
+<p>You can view the actual parameters by viewing the low-level trace of 
+the Hibernate logs. This is not set up by default. However, we can add 
+log4j to allow us to see these low-level logs.</p>
+
+
+
+
+
+
+
+<p><br></p>
+
+
+
+
+
+
+
+<h4><strong>Here is an overview of the process:</strong></h4>
+
+
+
+
+
+
+
+
+
+<p>1. Add log4j to your project classpath </p>
+
+
+
+
+
+
+
+<p>2. Add log4j.properties to your “src” directory</p>
+
+
+
+
+
+
+
+<p><br></p>
+
+
+
+
+
+
+
+<h4><strong>Here are the detailed steps:</strong></h4>
+
+
+
+
+
+
+
+
+
+<p><strong>1. Add log4j to your project classpath</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+<p>1a. Download log4j v1.2.17 from this link:
+
+– <a href="http://central.maven.org/maven2/log4j/log4j/1.2.17/log4j-1.2.17.jar" rel="nofollow">http://central.maven.org/maven2/log4j/log4j/1.2.17/log4j-1.2.17.jar</a></p>
+
+
+
+
+
+
+
+
+
+
+
+<p>1b. Copy this file to your project’s lib directory</p>
+
+
+
+
+
+
+
+<figure><img src="https://udemy-images.s3.amazonaws.com:443/redactor/2016-10-06_12-43-18-43665fab7523d5393142fa06db76c540/image1.png"></figure>
+
+<p><br></p>
+
+
+
+
+
+<p>1c. Right-click your Eclipse project and select <strong>Properties</strong></p>
+
+
+
+
+
+
+
+<p>1d. Select<strong> Build Path &gt; Libraries &gt; Add JARS…
+
+</strong></p>
+
+
+
+
+
+
+
+
+
+<p>1e. Select the <strong>log4j-1.2.17.jar</strong> file from the <strong>lib</strong> directory</p>
+
+
+
+
+
+<figure><img src="https://udemy-images.s3.amazonaws.com:443/redactor/2016-10-06_12-43-33-16c189ccb8a5d926415b9fcaa99995c2/image2.png"></figure>
+
+<p><br></p>
+
+
+
+
+
+<p><strong>2. Add log4j.properties to your “src” directory</strong></p>
+
+
+
+
+
+
+
+<p>2a. Copy the text from below</p>
+
+
+
+
+
+<pre class="prettyprint linenums"># Root logger option
+log4j.rootLogger=DEBUG, stdout
+
+# Redirect log messages to console
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.Target=System.out
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n
+
+log4j.logger.org.hibernate=TRACE</pre>
+
+
+
+
+
+
+
+
+
+
+
+<p>2b. Save this file as "log4j.properties" in your “src” directory</p>
+
+
+
+
+
+<figure><img src="https://udemy-images.s3.amazonaws.com:443/redactor/2016-10-06_12-44-00-feca336a1d4990fe31e1612c44da03bd/image3.png"></figure>
+
+<p><br></p>
+
+
+
+
+
+<p>Note: This file has an important setting:</p>
+
+
+
+
+
+<p><code>log4j.logger.org.hibernate=TRACE</code> </p>
+
+
+
+
+
+<p>This allows you see a low-level trace of Hibernate and this allows you see the real SQL parameter values.</p>
+
+
+
+
+
+
+
+<p>Now run your application. You will see a lot of low-level TRACE logs in the Eclipse Console window.</p>
+
+
+
+
+
+
+
+
+
+<p>Right-click in the Eclipse Console window and select <strong>Find/Replace…</strong></p>
+
+
+
+
+
+
+
+
+
+<p>Search for: <strong>binding parameter<br></strong></p><p>or search for: <strong>extracted value</strong></p>
+
+
+
+
+
+
+
+
+
+<p>(the search string changes depending on which version of Hibernate you are using)<br></p><p>You will see the logs with the real parameter values. Congrats!</p>
+
+
+
+
+
+<figure><img src="https://udemy-images.s3.amazonaws.com:443/redactor/2016-10-06_12-44-20-3b68464e433153ad29cb254bb1f7f136/image4.png"></figure>
+
+<p><br></p></p>
+                </div>
+                </div>
+                </div>
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+                </body>
+                </html>
